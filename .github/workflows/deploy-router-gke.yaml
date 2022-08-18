@@ -1,0 +1,126 @@
+name: Deploy Router GKE
+
+# Started from GH Docs
+# https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-google-kubernetes-engine
+
+# REQUIRED REPO SECRETS
+#   - GCP_CREDENTIALS
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Apollo Router Version"
+        type: string
+        required: true
+        default: v0.15.1
+      cluster:
+        description: "Target K8s cluster"
+        type: choice
+        required: true
+        default: apollo-supergraph-k8s-dev
+        options:
+          - apollo-supergraph-k8s-dev
+          - apollo-supergraph-k8s-prod
+      variant:
+        description: "Supergraph variant"
+        type: choice
+        required: false
+        options:
+          - dev
+          - prod
+      dry-run:
+        type: boolean
+        description: "Run a dry run with helm"
+        required: false
+        default: false
+      debug:
+        type: boolean
+        description: "Run helm in debug mode"
+        required: false
+        default: false
+
+env:
+  GKE_ZONE: us-east1 # Add your cluster zone here.
+  APOLLO_GRAPH_ID: ${{ secrets.APOLLO_GRAPH_ID }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v0"
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: "Set up Cloud SDK"
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: "Use gcloud CLI"
+        run: gcloud info
+
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+      - run: |-
+          gcloud --quiet auth configure-docker
+
+      # Get the GKE credentials so we can deploy to the cluster
+      - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+        with:
+          cluster_name: ${{ inputs.cluster }}
+          location: ${{ env.GKE_ZONE }}
+
+      # Install helm
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      # Deploy the Docker image to the GKE cluster with dry run
+      - name: Helm dry-run
+        if: ${{ inputs.dry-run }}
+        run: |
+          helm upgrade router \
+          --set image.tag=${{ inputs.version }} \
+          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
+          --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
+          --dry-run \
+          --atomic \
+          --install \
+          --timeout 10m0s \
+          ./deploy/router \
+          --values ./deploy/router/values.yaml
+
+      # Deploy the Docker image to the GKE cluster for real with debug
+      - name: Deploy
+        if: ${{ !inputs.dry-run && inputs.debug }}
+        run: |
+          helm upgrade router \
+          --set image.tag=${{ inputs.version }} \
+          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
+          --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
+          --atomic \
+          --install \
+          --timeout 10m0s \
+          --debug \
+          ./deploy/router \
+          --values ./deploy/router/values.yaml
+
+      # Deploy the Docker image to the GKE cluster for real
+      - name: Deploy
+        if: ${{ !inputs.dry-run }}
+        run: |
+          helm upgrade router \
+          --set image.tag=${{ inputs.version }} \
+          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
+          --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
+          --atomic \
+          --install \
+          --timeout 10m0s \
+          ./deploy/router \
+          --values ./deploy/router/values.yaml
