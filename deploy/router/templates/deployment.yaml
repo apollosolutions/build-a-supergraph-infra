@@ -14,10 +14,12 @@ spec:
       {{- include "router.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        # changes when the configmap changes to cause a redeployment (hot reloading doesn't work: github.com/apollographql/router/issues/1695)
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") $ | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
         {{- include "router.selectorLabels" . | nindent 8 }}
     spec:
@@ -35,7 +37,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - --hot-reload
             - --config
             - /app/configuration.yaml
           ports:
