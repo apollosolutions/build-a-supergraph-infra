@@ -12,14 +12,6 @@ name: Deploy Tooling GKE
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: "Target environment"
-        type: choice
-        required: true
-        default: dev
-        options:
-          - dev
-          - prod
       dry-run:
         type: boolean
         description: "Run a dry run with helm"
@@ -65,7 +57,7 @@ jobs:
       # Get the GKE credentials so we can deploy to the cluster
       - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
         with:
-          cluster_name: ${{ env.CLUSTER_PREFIX }}-${{ inputs.environment }}
+          cluster_name: ${{ env.CLUSTER_PREFIX }}-prod
           location: ${{ env.GKE_ZONE }}
 
       # Install helm
@@ -78,7 +70,7 @@ jobs:
         if: ${{ inputs.dry-run }}
         run: |
           helm upgrade tooling \
-          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
+          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@prod \
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --dry-run \
           --atomic \
@@ -94,7 +86,7 @@ jobs:
           helm upgrade tooling \
           --atomic \
           --install \
-          --timeout 10m0s \
+          --timeout 3m0s \
           --debug \
           ./deploy/tooling \
           --values ./deploy/tooling/values.yaml
