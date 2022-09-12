@@ -51,6 +51,9 @@ securityContext:
 service:
   type: ClusterIP
   port: 80
+  annotations: {
+    cloud.google.com/neg: '{"exposed_ports": {"80":{"name": "lb-neg"}}}'
+  }
 
 ingress:
   enabled: false
