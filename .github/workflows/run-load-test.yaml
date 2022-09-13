@@ -14,6 +14,11 @@ on:
         options:
           - short
           - long
+      parallelism:
+        description: Number of workers
+        type: string
+        default: "1"
+        required: true
 
 env:
   GKE_ZONE: us-east1 # Add your cluster zone here.
@@ -62,7 +67,7 @@ jobs:
           metadata:
             name: ${RUN_NAME}
           spec:
-            parallelism: 2
+            parallelism: ${{ inputs.parallelism }}
             arguments: "--out influxdb=http://influxdb.monitoring:8086/db"
             script:
               configMap:
