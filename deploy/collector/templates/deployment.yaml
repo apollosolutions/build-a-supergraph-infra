@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "tooling.fullname" . }}
+  name: {{ include "collector.fullname" . }}
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "tooling.labels" . | nindent 4 }}
+    {{- include "collector.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "tooling.selectorLabels" . | nindent 6 }}
+      {{- include "collector.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,13 +19,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "tooling.selectorLabels" . | nindent 8 }}
+        {{- include "collector.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "tooling.serviceAccountName" . }}
+      serviceAccountName: {{ include "collector.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -57,7 +57,7 @@ spec:
         - name: otel-configuration
           configMap:
             name: otel-config
-            items: 
+            items:
               - key: configuration.yaml
                 path: config.yaml
       {{- with .Values.nodeSelector }}

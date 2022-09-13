@@ -1,10 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "tooling.fullname" . }}
+  name: {{ include "collector.fullname" . }}
   namespace: {{ .Values.namespace }}
-  labels:
-    {{- include "tooling.labels" . | nindent 4 }}
+  labels: {{- include "collector.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -20,5 +19,4 @@ spec:
       port: 8888
       protocol: TCP
       name: metrics-prom
-  selector:
-    {{- include "tooling.selectorLabels" . | nindent 4 }}
+  selector: {{- include "collector.selectorLabels" . | nindent 4 }}

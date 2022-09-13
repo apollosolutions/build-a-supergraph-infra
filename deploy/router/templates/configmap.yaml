@@ -12,7 +12,7 @@ data:
     telemetry:
       tracing:
         otlp: 
-          endpoint: http://tooling.monitoring:4317
+          endpoint: http://collector.monitoring:4317
           protocol: grpc
         trace_config:
           service_name: "router"
