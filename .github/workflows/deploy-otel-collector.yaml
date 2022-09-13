@@ -1,4 +1,4 @@
-name: Deploy Tooling GKE
+name: Deploy Open Telemetry Collector
 
 # Started from GH Docs
 # https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-google-kubernetes-engine
@@ -6,22 +6,9 @@ name: Deploy Tooling GKE
 # REQUIRED REPO SECRETS
 #   - GCP_CREDENTIALS
 #   - CLUSTER_PREFIX
-#   - APOLLO_GRAPH_ID
-#   - APOLLO_KEY_RESOURCE_NAME
 
 on:
   workflow_dispatch:
-    inputs:
-      dry-run:
-        type: boolean
-        description: "Run a dry run with helm"
-        required: false
-        default: false
-      debug:
-        type: boolean
-        description: "Run helm in debug mode"
-        required: false
-        default: false
 
 env:
   GKE_ZONE: us-east1 # Add your cluster zone here.
@@ -65,37 +52,11 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-      # Deploy the Docker image to the GKE cluster with dry run
-      - name: Helm dry-run
-        if: ${{ inputs.dry-run }}
-        run: |
-          helm upgrade tooling \
-          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@prod \
-          --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
-          --dry-run \
-          --atomic \
-          --install \
-          --timeout 10m0s \
-          ./deploy/tooling \
-          --values ./deploy/tooling/values.yaml
-
-      # Deploy the Docker image to the GKE cluster for real with debug
-      - name: Deploy
-        if: ${{ !inputs.dry-run && inputs.debug }}
-        run: |
-          helm upgrade tooling \
-          --atomic \
-          --install \
-          --debug \
-          ./deploy/tooling \
-          --values ./deploy/tooling/values.yaml
-
-      # Deploy the Docker image to the GKE cluster for real
       - name: Deploy
         if: ${{ !inputs.dry-run }}
         run: |
-          helm upgrade tooling \
+          helm upgrade collector \
           --atomic \
           --install \
-          ./deploy/tooling \
-          --values ./deploy/tooling/values.yaml
+          ./deploy/collector \
+          --values ./deploy/collector/values.yaml
