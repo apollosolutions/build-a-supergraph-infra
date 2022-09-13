@@ -10,6 +10,13 @@ data:
     server:
       listen: 0.0.0.0:80
     telemetry:
+      tracing:
+        otlp: 
+          endpoint: http://tooling.monitoring:4317
+          protocol: grpc
+        trace_config:
+          service_name: "router"
+          service_namespace: "router"
       metrics:
         prometheus:
           enabled: true
