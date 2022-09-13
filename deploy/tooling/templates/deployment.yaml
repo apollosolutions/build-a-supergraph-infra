@@ -47,14 +47,6 @@ spec:
             - name: metrics-prom
               containerPort: 8888
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: 4318
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: metrics-http
           volumeMounts:
           - name: otel-configuration
             mountPath: /etc/otelcol

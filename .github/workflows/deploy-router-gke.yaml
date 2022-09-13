@@ -96,7 +96,6 @@ jobs:
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --atomic \
           --install \
-          --timeout 3m0s \
           --debug \
           ./deploy/router \
           --values ./deploy/router/values.yaml
@@ -110,6 +109,5 @@ jobs:
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --atomic \
           --install \
-          --timeout 3m0s \
           ./deploy/router \
           --values ./deploy/router/values.yaml

@@ -86,7 +86,6 @@ jobs:
           helm upgrade tooling \
           --atomic \
           --install \
-          --timeout 3m0s \
           --debug \
           ./deploy/tooling \
           --values ./deploy/tooling/values.yaml
@@ -98,6 +97,5 @@ jobs:
           helm upgrade tooling \
           --atomic \
           --install \
-          --timeout 3m0s \
           ./deploy/tooling \
           --values ./deploy/tooling/values.yaml
