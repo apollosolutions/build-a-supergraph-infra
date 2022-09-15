@@ -39,18 +39,25 @@ spec:
           args:
             - --config
             - /app/configuration.yaml
+            - --dev
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /.well-known/apollo/server-health
-              port: http
+              httpHeaders:
+                - name: Content-Type
+                  value: application/json
+              path: "/?query={__typename}"
+              port: {{ .Values.service.port }}
           readinessProbe:
             httpGet:
-              path: /.well-known/apollo/server-health
-              port: http
+              httpHeaders:
+                - name: Content-Type
+                  value: application/json
+              path: "/?query={__typename}"
+              port: {{ .Values.service.port }}
           volumeMounts:
           - name: apollo-secrets
             mountPath: "/var/secrets"
