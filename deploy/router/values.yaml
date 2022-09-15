@@ -19,6 +19,9 @@ image:
 env:
   APOLLO_GRAPH_REF: ""
 
+monitoring:
+  otel: false
+
 imagePullSecrets: []
 # nameOverride: router-app
 # fullnameOverride: router-chart

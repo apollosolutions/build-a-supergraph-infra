@@ -3,12 +3,22 @@ kind: ConfigMap
 metadata:
   name: {{ include "router.fullname" . }}
   namespace: {{ .Values.namespace }}
-  labels: {{- include "router.labels" . | nindent 4 }}
+  labels: 
+    {{- include "router.labels" . | nindent 4 }}
 data:
   configuration.yaml: |
     supergraph:
       listen: 127.0.0.1:80
     telemetry:
+      {{- if .Values.monitoring.otel }}
+      tracing:
+        otlp: 
+          endpoint: http://collector.monitoring:4317
+          protocol: grpc
+        trace_config:
+          service_name: "router"
+          service_namespace: "router"
+      {{- end }}
       metrics:
         prometheus:
           enabled: true
@@ -16,4 +26,3 @@ data:
       all: true
     plugins:
       experimental.expose_query_plan: true
-
