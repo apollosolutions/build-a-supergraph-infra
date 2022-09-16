@@ -78,36 +78,44 @@ jobs:
         if: ${{ inputs.dry-run }}
         run: |
           helm upgrade router \
+          --create-namespace \
+          --namespace router \
           --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --dry-run \
           --atomic \
           --install \
-          --timeout 10m0s \
           ./deploy/router \
-          --values ./deploy/router/values.yaml
+          --values ./deploy/router/values.yaml \
+          -f ./deploy/router/environments/${{ inputs.environment }}.yaml
 
       # Deploy the Docker image to the GKE cluster for real with debug
       - name: Deploy
         if: ${{ !inputs.dry-run && inputs.debug }}
         run: |
           helm upgrade router \
+          --create-namespace \
+          --namespace router \
           --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --atomic \
           --install \
           --debug \
           ./deploy/router \
-          --values ./deploy/router/values.yaml
+          --values ./deploy/router/values.yaml \
+          -f ./deploy/router/environments/${{ inputs.environment }}.yaml
 
       # Deploy the Docker image to the GKE cluster for real
       - name: Deploy
         if: ${{ !inputs.dry-run }}
         run: |
           helm upgrade router \
+          --create-namespace \
+          --namespace router \
           --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --atomic \
           --install \
           ./deploy/router \
-          --values ./deploy/router/values.yaml
+          --values ./deploy/router/values.yaml \
+          -f ./deploy/router/environments/${{ inputs.environment }}.yaml

@@ -1,21 +1,24 @@
-name: Deploy Open Telemetry Collector
-
-# Started from GH Docs
-# https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-google-kubernetes-engine
+name: Uninstall Router
 
 # REQUIRED REPO SECRETS
 #   - GCP_CREDENTIALS
 #   - CLUSTER_PREFIX
 
 on:
-  push:
-    branches: ["main"]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        type: choice
+        required: true
+        default: dev
+        options:
+          - dev
+          - prod
 
 env:
   GKE_ZONE: us-east1 # Add your cluster zone here.
   CLUSTER_PREFIX: ${{ secrets.CLUSTER_PREFIX }}
-  APOLLO_GRAPH_ID: ${{ secrets.APOLLO_GRAPH_ID }}
 
 jobs:
   deploy:
@@ -46,7 +49,7 @@ jobs:
       # Get the GKE credentials so we can deploy to the cluster
       - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
         with:
-          cluster_name: ${{ env.CLUSTER_PREFIX }}-prod
+          cluster_name: ${{ env.CLUSTER_PREFIX }}-${{ inputs.environment }}
           location: ${{ env.GKE_ZONE }}
 
       # Install helm
@@ -54,11 +57,6 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-      - name: Deploy
-        if: ${{ !inputs.dry-run }}
+      - name: Helm
         run: |
-          helm upgrade collector \
-          --atomic \
-          --install \
-          ./deploy/collector \
-          --values ./deploy/collector/values.yaml
+          helm uninstall router
