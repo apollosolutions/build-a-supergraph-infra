@@ -78,6 +78,8 @@ jobs:
         if: ${{ inputs.dry-run }}
         run: |
           helm upgrade router \
+          --create-namespace \
+          --namespace router \
           --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --dry-run \
@@ -92,6 +94,8 @@ jobs:
         if: ${{ !inputs.dry-run && inputs.debug }}
         run: |
           helm upgrade router \
+          --create-namespace \
+          --namespace router \
           --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --atomic \
@@ -106,6 +110,8 @@ jobs:
         if: ${{ !inputs.dry-run }}
         run: |
           helm upgrade router \
+          --create-namespace \
+          --namespace router \
           --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
           --atomic \

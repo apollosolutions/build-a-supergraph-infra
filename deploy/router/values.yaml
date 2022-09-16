@@ -4,8 +4,6 @@
 
 replicaCount: 1
 
-namespace: router
-
 # this is the secret resource name Google Secrets Manager and
 # will be set during the helm deploy
 apolloKeySecretResourceName: ""
