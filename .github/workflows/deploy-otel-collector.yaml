@@ -8,6 +8,8 @@ name: Deploy Open Telemetry Collector
 #   - CLUSTER_PREFIX
 
 on:
+  push:
+    branches: ["main"]
   workflow_dispatch:
 
 env:

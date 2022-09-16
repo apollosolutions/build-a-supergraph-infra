@@ -83,9 +83,9 @@ jobs:
           --dry-run \
           --atomic \
           --install \
-          --timeout 10m0s \
           ./deploy/router \
-          --values ./deploy/router/values.yaml
+          --values ./deploy/router/values.yaml \
+          -f ./deploy/router/environments/${{ inputs.environment }}.yaml
 
       # Deploy the Docker image to the GKE cluster for real with debug
       - name: Deploy
@@ -98,7 +98,8 @@ jobs:
           --install \
           --debug \
           ./deploy/router \
-          --values ./deploy/router/values.yaml
+          --values ./deploy/router/values.yaml \
+          -f ./deploy/router/environments/${{ inputs.environment }}.yaml
 
       # Deploy the Docker image to the GKE cluster for real
       - name: Deploy
@@ -110,4 +111,5 @@ jobs:
           --atomic \
           --install \
           ./deploy/router \
-          --values ./deploy/router/values.yaml
+          --values ./deploy/router/values.yaml \
+          -f ./deploy/router/environments/${{ inputs.environment }}.yaml
