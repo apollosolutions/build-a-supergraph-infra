@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "collector.fullname" . }}
-  namespace: {{ .Values.namespace }}
   labels:
     {{- include "collector.labels" . | nindent 4 }}
 spec:

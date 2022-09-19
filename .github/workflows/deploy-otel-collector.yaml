@@ -58,6 +58,8 @@ jobs:
         if: ${{ !inputs.dry-run }}
         run: |
           helm upgrade collector \
+          --create-namespace \
+          --namespace monitoring \
           --atomic \
           --install \
           ./deploy/collector \

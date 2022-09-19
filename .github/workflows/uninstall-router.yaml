@@ -59,4 +59,4 @@ jobs:
 
       - name: Helm
         run: |
-          helm uninstall router
+          helm uninstall router --namespace router
