@@ -29,7 +29,6 @@ jobs:
   deploy:
     name: test
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       - name: Checkout

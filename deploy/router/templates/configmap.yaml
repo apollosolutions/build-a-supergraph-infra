@@ -17,10 +17,11 @@ data:
         trace_config:
           service_name: "router"
           service_namespace: "router"
-      {{- end }}
       metrics:
-        prometheus:
-          enabled: true
+        otlp:
+          endpoint: http://collector.monitoring:4317
+          protocol: grpc
+      {{- end }}
     include_subgraph_errors:
       all: true
     plugins:
