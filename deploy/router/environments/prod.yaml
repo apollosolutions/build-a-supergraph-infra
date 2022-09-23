@@ -1,2 +1,6 @@
 monitoring:
   otel: true
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi

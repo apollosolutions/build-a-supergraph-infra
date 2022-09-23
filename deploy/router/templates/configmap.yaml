@@ -8,8 +8,11 @@ data:
   configuration.yaml: |
     supergraph:
       listen: 0.0.0.0:80
+    health-check:
+      listen: 0.0.0.0:8088
+      enabled: true
+    {{- if .Values.monitoring.otel }}
     telemetry:
-      {{- if .Values.monitoring.otel }}
       tracing:
         otlp: 
           endpoint: http://collector.monitoring:4317
@@ -21,7 +24,7 @@ data:
         otlp:
           endpoint: http://collector.monitoring:4317
           protocol: grpc
-      {{- end }}
+    {{- end }}
     include_subgraph_errors:
       all: true
     plugins:

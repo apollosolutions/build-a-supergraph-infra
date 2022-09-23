@@ -12,7 +12,7 @@ image:
   repository: ghcr.io/apollographql/router
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v1.0.0-rc.2
+  tag: v1.0.0
 
 env:
   APOLLO_GRAPH_REF: ""
@@ -70,10 +70,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources:
-  requests:
-    cpu: 500m
-    memory: 500Mi
+resources: {}
 
 autoscaling:
   enabled: false
