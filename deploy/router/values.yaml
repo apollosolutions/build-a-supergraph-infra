@@ -53,8 +53,11 @@ service:
   type: ClusterIP
   port: 80
 
+healthcheck:
+  port: 8088
+
 ingress:
-  enabled: false
+  enabled: true
   className: ""
   annotations:
     {}
