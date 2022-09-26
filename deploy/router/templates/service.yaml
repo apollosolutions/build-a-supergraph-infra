@@ -4,6 +4,10 @@ metadata:
   name: {{ include "router.fullname" . }}
   labels:
     {{- include "router.labels" . | nindent 4 }}
+  {{- if .Values.ingress.enabled -}}
+  annotations:
+    cloud.google.com/backend-config: '{"default": "http-hc-config"}'
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
