@@ -6,7 +6,7 @@ metadata:
 spec:
   healthCheck:
     checkIntervalSec: 15
-    port: {{ .Values.healtcheck.port }}
+    port: {{ .Values.healthcheck.port }}
     type: HTTP
     requestPath: /health
 {{- end }}

@@ -46,11 +46,11 @@ spec:
           livenessProbe:
             httpGet:
               path: "/health"
-              port: {{ .Values.healtcheck.port }}
+              port: {{ .Values.healthcheck.port }}
           readinessProbe:
             httpGet:
               path: "/health"
-              port: {{ .Values.healtcheck.port }}
+              port: {{ .Values.healthcheck.port }}
           volumeMounts:
           - name: apollo-secrets
             mountPath: "/var/secrets"
