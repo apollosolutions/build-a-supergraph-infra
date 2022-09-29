@@ -1,6 +1,27 @@
-monitoring:
-  otel: true
-resources:
-  requests:
-    cpu: 500m
-    memory: 512Mi
+router:
+  router:
+    configuration:
+      # duplicated from ../values.yaml
+      health-check:
+        listen: 0.0.0.0:8088
+      include_subgraph_errors:
+        all: true
+      plugins:
+        experimental.expose_query_plan: true
+      # end duplication
+      telemetry:
+        tracing:
+          otlp:
+            endpoint: http://collector.monitoring:4317
+            protocol: grpc
+          trace_config:
+            service.name: "router"
+            service.namespace: "router"
+        metrics:
+          otlp:
+            endpoint: http://collector.monitoring:4317
+            protocol: grpc
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi

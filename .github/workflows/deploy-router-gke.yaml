@@ -72,6 +72,8 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
+          helm dependency update ./deploy/router
+
       # Deploy the Docker image to the GKE cluster with dry run
       - name: Helm dry-run
         if: ${{ inputs.dry-run }}
@@ -79,8 +81,7 @@ jobs:
           helm upgrade router \
           --create-namespace \
           --namespace router \
-          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
-          --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
+          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --dry-run \
           --atomic \
           --install \
@@ -95,8 +96,7 @@ jobs:
           helm upgrade router \
           --create-namespace \
           --namespace router \
-          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
-          --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
+          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --atomic \
           --install \
           --debug \
@@ -111,8 +111,7 @@ jobs:
           helm upgrade router \
           --create-namespace \
           --namespace router \
-          --set env.APOLLO_GRAPH_REF=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
-          --set apolloKeySecretResourceName="${{ secrets.APOLLO_KEY_RESOURCE_NAME }}" \
+          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
           --atomic \
           --install \
           ./deploy/router \

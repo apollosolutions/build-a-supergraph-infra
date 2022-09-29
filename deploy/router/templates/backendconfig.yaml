@@ -1,4 +1,4 @@
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.router.ingress.enabled -}}
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
@@ -6,7 +6,7 @@ metadata:
 spec:
   healthCheck:
     checkIntervalSec: 15
-    port: {{ .Values.healthcheck.port }}
+    port: {{ splitList ":" ((index .Values.router.router.configuration "health-check").listen | default ":8088") | last }}
     type: HTTP
     requestPath: /health
 {{- end }}
