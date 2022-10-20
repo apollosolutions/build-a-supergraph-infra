@@ -8,34 +8,21 @@ router:
       # duplicated in environments/prod.yaml
       health-check:
         listen: 0.0.0.0:8088
+      sandbox:
+        enabled: true
+      homepage:
+        enabled: false
+      supergraph:
+        introspection: true
       include_subgraph_errors:
         all: true
       plugins:
         experimental.expose_query_plan: true
   ingress:
-    enabled: true
-  containerPorts:
-    http: 80
-  serviceAccount:
-    create: false
-    name: secrets-csi-k8s
+    enabled: false
   service:
     annotations:
       cloud.google.com/backend-config: '{"default": "http-hc-config"}'
-  extraVolumeMounts:
-    - name: apollo-secrets
-      mountPath: "/var/secrets"
-      readOnly: true
-  extraVolumes:
-    - name: apollo-secrets
-      csi:
-        driver: secrets-store.csi.k8s.io
-        readOnly: true
-        volumeAttributes:
-          secretProviderClass: "apollo-secrets"
-  extraEnvVars:
-    - name: APOLLO_KEY
-      valueFrom:
-        secretKeyRef:
-          name: apollokey
-          key: pwd
+ingress:
+  enabled: true
+  name: router

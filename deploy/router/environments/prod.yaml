@@ -4,6 +4,12 @@ router:
       # duplicated from ../values.yaml
       health-check:
         listen: 0.0.0.0:8088
+      sandbox:
+        enabled: true
+      homepage:
+        enabled: false
+      supergraph:
+        introspection: true
       include_subgraph_errors:
         all: true
       plugins:
@@ -15,8 +21,8 @@ router:
             endpoint: http://collector.monitoring:4317
             protocol: grpc
           trace_config:
-            service.name: "router"
-            service.namespace: "router"
+            service_name: "router"
+            service_namespace: "router"
         metrics:
           otlp:
             endpoint: http://collector.monitoring:4317
