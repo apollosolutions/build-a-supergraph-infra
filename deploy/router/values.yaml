@@ -2,88 +2,27 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
-
-# this is the secret resource name Google Secrets Manager and
-# will be set during the helm deploy
-apolloKeySecretResourceName: ""
-
-image:
-  repository: ghcr.io/apollographql/router
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: v1.0.0
-
-env:
-  APOLLO_GRAPH_REF: ""
-
-monitoring:
-  otel: false
-
-imagePullSecrets: []
-# nameOverride: router-app
-# fullnameOverride: router-chart
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  # create: true
-  create: false
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: secrets-csi-k8s
-
-podAnnotations: {}
-
-podSecurityContext:
-  {}
-  # fsGroup: 2000
-
-securityContext:
-  {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
-
-healthcheck:
-  port: 8088
-
+router:
+  router:
+    configuration:
+      # duplicated in environments/prod.yaml
+      health-check:
+        listen: 0.0.0.0:8088
+      sandbox:
+        enabled: true
+      homepage:
+        enabled: false
+      supergraph:
+        introspection: true
+      include_subgraph_errors:
+        all: true
+      plugins:
+        experimental.expose_query_plan: true
+  ingress:
+    enabled: false
+  service:
+    annotations:
+      cloud.google.com/backend-config: '{"default": "http-hc-config"}'
 ingress:
   enabled: true
-  className: ""
-  annotations:
-    {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: router.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
-resources: {}
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+  name: router
