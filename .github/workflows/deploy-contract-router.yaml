@@ -1,13 +1,9 @@
 name: Deploy Contract Router
 
-# Started from GH Docs
-# https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-google-kubernetes-engine
-
-# REQUIRED REPO SECRETS
-#   - GCP_CREDENTIALS
-#   - CLUSTER_PREFIX
-#   - APOLLO_GRAPH_ID
-#   - APOLLO_KEY
+# This file is identical to deploy-router-gke.yaml except:
+# - It has a "variant" input
+# - The router is deployed to a ${{ variant }}-router namespace
+# - The graph ref for fetching the supergraph uses the variant (intended to be a contract variant)
 
 on:
   workflow_dispatch:
