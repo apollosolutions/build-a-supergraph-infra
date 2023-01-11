@@ -1,25 +1,18 @@
-name: Deploy Router GKE
-
-# Started from GH Docs
-# https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-google-kubernetes-engine
-
-# REQUIRED REPO SECRETS
-#   - GCP_CREDENTIALS
-#   - CLUSTER_PREFIX
-#   - APOLLO_GRAPH_ID
-#   - APOLLO_KEY
+name: Deploy Router AWS
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       environment:
-        description: "Target environment"
-        type: choice
+        description: "Target variant"
+        type: string
         required: true
         default: dev
-        options:
-          - dev
-          - prod
+      variant:
+        description: "Target variant"
+        type: string
+        required: true
+        default: dev
       dry-run:
         type: boolean
         description: "Run a dry run with helm"
@@ -30,9 +23,21 @@ on:
         description: "Run helm in debug mode"
         required: false
         default: false
-
+    secrets:
+      AWS_ACCESS_KEY:
+        required: true
+      AWS_SECRET_KEY:
+        required: true
+      CLUSTER_PREFIX:
+        required: true
+      APOLLO_GRAPH_ID:
+        required: true
+      APOLLO_KEY:
+        required: true
 env:
-  GKE_ZONE: us-east1 # Add your cluster zone here.
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  AWS_REGION: ${{ inputs.region }}
   CLUSTER_PREFIX: ${{ secrets.CLUSTER_PREFIX }}
   APOLLO_GRAPH_ID: ${{ secrets.APOLLO_GRAPH_ID }}
 
@@ -40,39 +45,12 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - id: "auth"
-        uses: "google-github-actions/auth@v0"
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
-      - name: "Set up Cloud SDK"
-        uses: google-github-actions/setup-gcloud@v0
-
-      - name: "Use gcloud CLI"
-        run: gcloud info
-
-      # Configure Docker to use the gcloud command-line tool as a credential
-      # helper for authentication
-      - run: |-
-          gcloud --quiet auth configure-docker
-
-      # Get the GKE credentials so we can deploy to the cluster
-      - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
-        with:
-          cluster_name: ${{ env.CLUSTER_PREFIX }}-${{ inputs.environment }}
-          location: ${{ env.GKE_ZONE }}
-
-      # Install helm
-      - name: Install Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
-          helm dependency update ./deploy/router
+      - name: "Configure Kubeconfig w/ EKS"
+        run: aws eks update-kubeconfig --name ${{ secrets.CLUSTER_PREFIX }}-${{ inputs.cluster_suffix }} --region ${{ env.AWS_REGION }}
 
       # Deploy the Docker image to the GKE cluster with dry run
       - name: Helm dry-run
@@ -81,7 +59,7 @@ jobs:
           helm upgrade router \
           --create-namespace \
           --namespace router \
-          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
+          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
           --dry-run \
           --atomic \
@@ -97,7 +75,7 @@ jobs:
           helm upgrade router \
           --create-namespace \
           --namespace router \
-          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
+          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
           --atomic \
           --install \
@@ -113,7 +91,7 @@ jobs:
           helm upgrade router \
           --create-namespace \
           --namespace router \
-          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.environment }} \
+          --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
           --atomic \
           --install \
