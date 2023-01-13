@@ -9,17 +9,17 @@ on:
 
 jobs:
   determine_cloud_provider:
-    uses: ./.github/workflows/_determine-provider.yml
+    uses: ./.github/workflows/_determine-provider.yaml
     secrets: inherit
 
   deploy_gcp:
     if: needs.determine_cloud_provider.outputs.gcp == 'true'
     needs: [determine_cloud_provider]
-    uses: ./.github/workflows/_uninstall-router-gke.yml
+    uses: ./.github/workflows/_uninstall-router-gke.yaml
     secrets: inherit
 
   deploy_aws:
     if: needs.determine_cloud_provider.outputs.aws == 'true'
     needs: [determine_cloud_provider]
-    uses: ./.github/workflows/_uninstall-router-aws.yml
+    uses: ./.github/workflows/_uninstall-router-aws.yaml
     secrets: inherit

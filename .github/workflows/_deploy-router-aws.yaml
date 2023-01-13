@@ -37,7 +37,7 @@ on:
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-  AWS_REGION: ${{ inputs.region }}
+  AWS_REGION: us-east-1
   CLUSTER_PREFIX: ${{ secrets.CLUSTER_PREFIX }}
   APOLLO_GRAPH_ID: ${{ secrets.APOLLO_GRAPH_ID }}
 
@@ -50,8 +50,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: "Configure Kubeconfig w/ EKS"
-        run: aws eks update-kubeconfig --name ${{ secrets.CLUSTER_PREFIX }}-${{ inputs.cluster_suffix }} --region ${{ env.AWS_REGION }}
+        run: aws eks update-kubeconfig --name ${{ secrets.CLUSTER_PREFIX }}-${{ inputs.environment }} --region ${{ env.AWS_REGION }}
 
+      - name: Helm dependency update
+        run: |
+          helm dependency update ./deploy/router
+          
       # Deploy the Docker image to the GKE cluster with dry run
       - name: Helm dry-run
         if: ${{ inputs.dry-run }}
@@ -61,6 +65,10 @@ jobs:
           --namespace router \
           --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
+          --set router.service.annotations."kubernetes\.io/ingress\.class"=alb \
+          --set ingress.annotations."alb\.ingress\.kubernetes\.io/target-type"=ip \
+          --set ingress.annotations."alb\.ingress\.kubernetes\.io/scheme"=internet-facing \
+          --set ingress.gcp=false \
           --dry-run \
           --atomic \
           --install \
@@ -77,6 +85,10 @@ jobs:
           --namespace router \
           --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
+          --set router.service.annotations."kubernetes\.io/ingress\.class"=alb \
+          --set ingress.annotations."alb\.ingress\.kubernetes\.io/target-type"=ip \
+          --set ingress.annotations."alb\.ingress\.kubernetes\.io/scheme"=internet-facing \
+          --set ingress.gcp=false \
           --atomic \
           --install \
           --debug \
@@ -93,6 +105,10 @@ jobs:
           --namespace router \
           --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
+          --set router.service.annotations."kubernetes\.io/ingress\.class"=alb \
+          --set ingress.annotations."alb\.ingress\.kubernetes\.io/target-type"=ip \
+          --set ingress.annotations."alb\.ingress\.kubernetes\.io/scheme"=internet-facing \
+          --set ingress.gcp=false \
           --atomic \
           --install \
           ./deploy/router \

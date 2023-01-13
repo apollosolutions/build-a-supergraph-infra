@@ -42,4 +42,5 @@ jobs:
           --atomic \
           --install \
           ./deploy/collector \
+          --set serviceAccount.create=true \
           --values ./deploy/collector/values.yaml
