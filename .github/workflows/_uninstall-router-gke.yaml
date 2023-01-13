@@ -6,6 +6,11 @@ name: Uninstall Router GKE
 
 on:
   workflow_call:
+    inputs:
+      environment: 
+        type: string
+        default: dev
+        required: true
     secrets:
       GCP_CREDENTIALS:
         required: true
@@ -44,9 +49,10 @@ jobs:
       # Get the GKE credentials so we can deploy to the cluster
       - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
         with:
-          cluster_name: ${{ env.CLUSTER_PREFIX }}-prod
+          cluster_name: ${{ env.CLUSTER_PREFIX }}-${{ inputs.environment }}
           location: ${{ env.GKE_ZONE }}
 
       - name: Helm Uninstall
         run: |
-          helm uninstall router --namespace router
+          helm uninstall router --namespace router || true
+

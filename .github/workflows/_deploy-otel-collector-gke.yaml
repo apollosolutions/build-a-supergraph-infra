@@ -50,11 +50,28 @@ jobs:
           cluster_name: ${{ env.CLUSTER_PREFIX }}-prod
           location: ${{ env.GKE_ZONE }}
 
-      - name: Deploy
+      - name: Helm dependency update
+        run: |
+          helm dependency update ./deploy/zipkin
+
+      - name: Deploy Otel
         if: ${{ !inputs.dry-run }}
         run: |
           helm upgrade collector \
           --atomic \
           --install \
           ./deploy/collector \
+          --namespace monitoring \
+          --create-namespace \
           --values ./deploy/collector/values.yaml
+
+      - name: Deploy Zipkin
+        if: ${{ !inputs.dry-run }}
+        run: |
+          helm upgrade zipkin \
+          --atomic \
+          --install \
+          ./deploy/zipkin \
+          --namespace zipkin \
+          --create-namespace \
+          --values ./deploy/zipkin/values.yaml

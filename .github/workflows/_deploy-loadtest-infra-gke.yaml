@@ -53,7 +53,7 @@ jobs:
       - name: Deploy InfluxDB and Grafana
         run: |
           helm repo add influxdata https://helm.influxdata.com/
-          helm upgrade --install influxdb influxdata/influxdb --namespace monitoring --create-namespace
+          helm upgrade --install influxdb influxdata/influxdb --namespace monitoring --create-namespace --values ./deploy/influxdb/values.yaml
 
           helm repo add grafana https://grafana.github.io/helm-charts
           helm upgrade --install grafana grafana/grafana --namespace monitoring --values ./deploy/grafana/values.yaml

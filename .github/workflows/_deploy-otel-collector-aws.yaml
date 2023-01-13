@@ -35,12 +35,29 @@ jobs:
       - name: "Configure Kubeconfig w/ EKS"
         run: aws eks update-kubeconfig --name ${{ secrets.CLUSTER_PREFIX }}-prod --region ${{ env.AWS_REGION }}
 
-      - name: Deploy
+      - name: Deploy Otel
         if: ${{ !inputs.dry-run }}
         run: |
           helm upgrade collector \
           --atomic \
           --install \
           ./deploy/collector \
+          --namespace monitoring \
+          --create-namespace \
           --set serviceAccount.create=true \
           --values ./deploy/collector/values.yaml
+
+      - name: Helm dependency update
+        run: |
+          helm dependency update ./deploy/zipkin
+
+      - name: Deploy Zipkin
+        if: ${{ !inputs.dry-run }}
+        run: |
+          helm upgrade zipkin \
+          --atomic \
+          --install \
+          ./deploy/zipkin \
+          --namespace zipkin \
+          --create-namespace \
+          --values ./deploy/zipkin/values.yaml

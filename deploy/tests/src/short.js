@@ -12,7 +12,7 @@ export const options = {
   },
 };
 
-const BASE_URL = "http://router.router/";
+const BASE_URL = "http://router.router.svc.cluster.local/";
 
 const query = `
 query Locations {

@@ -65,7 +65,7 @@ jobs:
           --namespace router \
           --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
-          --set router.service.annotations."kubernetes\.io/ingress\.class"=alb \
+          --set ingress.annotations."kubernetes\.io/ingress\.class"=alb \
           --set ingress.annotations."alb\.ingress\.kubernetes\.io/target-type"=ip \
           --set ingress.annotations."alb\.ingress\.kubernetes\.io/scheme"=internet-facing \
           --set ingress.gcp=false \
@@ -85,7 +85,7 @@ jobs:
           --namespace router \
           --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
-          --set router.service.annotations."kubernetes\.io/ingress\.class"=alb \
+          --set ingress.annotations."kubernetes\.io/ingress\.class"=alb \
           --set ingress.annotations."alb\.ingress\.kubernetes\.io/target-type"=ip \
           --set ingress.annotations."alb\.ingress\.kubernetes\.io/scheme"=internet-facing \
           --set ingress.gcp=false \
@@ -105,7 +105,7 @@ jobs:
           --namespace router \
           --set router.managedFederation.graphRef=$APOLLO_GRAPH_ID@${{ inputs.variant }} \
           --set router.managedFederation.apiKey=${{ secrets.APOLLO_KEY }} \
-          --set router.service.annotations."kubernetes\.io/ingress\.class"=alb \
+          --set ingress.annotations."kubernetes\.io/ingress\.class"=alb \
           --set ingress.annotations."alb\.ingress\.kubernetes\.io/target-type"=ip \
           --set ingress.annotations."alb\.ingress\.kubernetes\.io/scheme"=internet-facing \
           --set ingress.gcp=false \
