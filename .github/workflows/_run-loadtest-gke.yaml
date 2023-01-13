@@ -1,4 +1,4 @@
-name: Deploy Load Test GKE
+name: Run Load Test GKE
 
 on:
   workflow_call:
