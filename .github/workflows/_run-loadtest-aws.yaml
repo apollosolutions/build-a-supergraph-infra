@@ -1,4 +1,4 @@
-name: Run Load Test AWS
+name: _run-loadtest-aws
 
 on:
   workflow_call:

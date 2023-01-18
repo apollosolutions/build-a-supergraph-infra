@@ -1,4 +1,4 @@
-name: Run Load Test GKE
+name: _run-loadtest-gcp
 
 on:
   workflow_call:

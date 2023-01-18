@@ -1,4 +1,4 @@
-name: Deploy Router AWS
+name: _deploy-router-aws
 
 on:
   workflow_call:

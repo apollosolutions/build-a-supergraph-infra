@@ -1,4 +1,4 @@
-name: Uninstall Router AWS
+name: _uninstall-router-aws
 
 on:
   workflow_call:

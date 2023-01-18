@@ -1,4 +1,4 @@
-name: Deploy Load Test AWS
+name: _deploy-loadtest-infra-aws
 
 on:
   workflow_call:

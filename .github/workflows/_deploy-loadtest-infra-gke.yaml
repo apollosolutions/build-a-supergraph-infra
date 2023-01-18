@@ -1,4 +1,4 @@
-name: Deploy Load Test GKE
+name: _deploy-loadtest-infra-gcp
 
 # Started from GH Docs
 # https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-google-kubernetes-engine

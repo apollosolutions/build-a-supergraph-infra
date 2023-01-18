@@ -1,4 +1,4 @@
-name: Uninstall Router GKE
+name: _uninstall-router-gcp
 
 # REQUIRED REPO SECRETS
 #   - GCP_CREDENTIALS
