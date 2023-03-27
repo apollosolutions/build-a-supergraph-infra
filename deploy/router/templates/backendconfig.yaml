@@ -6,7 +6,7 @@ metadata:
 spec:
   healthCheck:
     checkIntervalSec: 15
-    port: {{ splitList ":" ((index .Values.router.router.configuration "health-check").listen | default ":8088") | last }}
+    port: {{ splitList ":" ((index .Values.router.router.configuration "health_check").listen | default ":8088") | last }}
     type: HTTP
     requestPath: /health
 {{- end }}

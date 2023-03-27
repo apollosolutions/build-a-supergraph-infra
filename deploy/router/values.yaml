@@ -6,7 +6,7 @@ router:
   router:
     configuration:
       # duplicated in environments/prod.yaml
-      health-check:
+      health_check:
         listen: 0.0.0.0:8080
       sandbox:
         enabled: true

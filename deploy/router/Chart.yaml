@@ -25,5 +25,5 @@ appVersion: "1.16.0"
 
 dependencies:
   - name: router
-    version: 1.8.0
+    version: 1.11.0
     repository: oci://ghcr.io/apollographql/helm-charts
