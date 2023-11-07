@@ -26,6 +26,16 @@ router:
       authorization:
         preview_directives:
           enabled: true
+  extraVolumeMounts:
+    - name: jwks-configmap-volume
+      mountPath: /router
+      readOnly: true
+  extraVolumes:
+    - name: jwks-configmap-volume
+      configMap:
+        # Provide the name of the ConfigMap containing the files you want
+        # to add to the container
+        name: jwks-configmap
   ingress:
     enabled: false
   service:
