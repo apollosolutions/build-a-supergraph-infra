@@ -18,11 +18,24 @@ router:
         all: true
       plugins:
         experimental.expose_query_plan: true
+      rhai:
+        scripts: /dist/rhai
+        main: main.rhai
   ingress:
     enabled: false
   service:
     annotations:
       cloud.google.com/backend-config: '{"default": "http-hc-config"}'
+  extraVolumeMounts:
+    - name: rhai-volume
+      mountPath: /dist/rhai
+      readOnly: true
+  extraVolumes:
+    - name: rhai-volume
+      configMap:
+        # Provide the name of the ConfigMap containing the files you want
+        # to add to the container
+        name: rhai-config
 ingress:
   enabled: true
   gcp: true
