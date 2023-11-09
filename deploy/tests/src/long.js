@@ -14,6 +14,14 @@ export const options = {
 
 const BASE_URL = "http://router.router.svc.cluster.local/";
 
+const loginMutation = `
+mutation Login {
+  login(username: "LOAD_TEST"){
+    token
+  }
+}
+`
+
 const query = `
 query Locations {
   locations {
@@ -30,8 +38,22 @@ const headers = {
 };
 
 export default () => {
-  const res = http.post(BASE_URL, JSON.stringify({ query: query }), {
+  const loginRes = http.post(BASE_URL, JSON.stringify({ query: loginMutation }), {
     headers: headers,
+  });
+  check(loginRes, {
+    "is login status 200": (r) => r.status === 200,
+  });
+  const loginBody = JSON.parse(loginRes.body);
+  check(loginBody, {
+    "login without errors": (b) => b.errors == null,
+  });
+  const jwt = loginBody.data.login.token;
+
+  const requestHeaders = headers;
+  requestHeaders['Authorization'] = `Bearer ${jwt}`
+  const res = http.post(BASE_URL, JSON.stringify({ query: query }), {
+    headers: requestHeaders,
   });
   check(res, {
     "is status 200": (r) => r.status === 200,
