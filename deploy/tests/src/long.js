@@ -35,6 +35,8 @@ query Locations {
 
 const headers = {
   "Content-Type": "application/json",
+  "apollographql-client-name": "apollo-client",
+  "apollographql-client-version": "1"
 };
 
 export default () => {
