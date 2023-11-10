@@ -23,7 +23,7 @@ fn process_request(request) {
     }
   }
   else {
-    log_error("No client headers set");
+    log_error("No client headers set. Please provide headers: apollographql-client-name and apollographql-client-version");
     throw #{
       status: 401,
       message: "No client headers set"
